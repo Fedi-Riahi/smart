@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CV Results</title>
+</head>
+<body>
+    <h1>CV Analysis</h1>
+    <h2>Extracted Skills</h2>
+    <ul>
+        {% for skill in cv.extracted_data.skills %}
+            <li>{{ skill }}</li>
+        {% empty %}
+            <li>No skills found.</li>
+        {% endfor %}
+    </ul>
+    <h2>Suggestions</h2>
+    <ul>
+        {% for suggestion in cv.extracted_data.suggestions %}
+            <li>{{ suggestion }}</li>
+        {% empty %}
+            <li>Your CV looks good!</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'upload_cv' %}">Upload Another CV</a>
+</body>
+</html>

@@ -1,0 +1,1459 @@
+[
+  [
+    "Skilled in Python, Java, and C++.",
+    {
+      "entities": [
+        [
+          8,
+          17,
+          "SKILL"
+        ],
+        [
+          19,
+          24,
+          "SKILL"
+        ],
+        [
+          25,
+          32,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in Microsoft Excel and SQL databases.",
+    {
+      "entities": [
+        [
+          11,
+          29,
+          "SKILL"
+        ],
+        [
+          30,
+          37,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in project management and Agile methodologies.",
+    {
+      "entities": [
+        [
+          15,
+          33,
+          "SKILL"
+        ],
+        [
+          34,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in digital marketing and SEO strategies.",
+    {
+      "entities": [
+        [
+          14,
+          34,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled at graphic design, particularly with Adobe Photoshop.",
+    {
+      "entities": [
+        [
+          11,
+          25,
+          "SKILL"
+        ],
+        [
+          40,
+          60,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in mechanical engineering and CAD software.",
+    {
+      "entities": [
+        [
+          10,
+          35,
+          "SKILL"
+        ],
+        [
+          36,
+          39,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in native mobile app development for iOS and Android.",
+    {
+      "entities": [
+        [
+          11,
+          43,
+          "SKILL"
+        ],
+        [
+          48,
+          63,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in financial modeling and investment analysis.",
+    {
+      "entities": [
+        [
+          15,
+          33,
+          "SKILL"
+        ],
+        [
+          34,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Fluent in Spanish and French translations.",
+    {
+      "entities": [
+        [
+          7,
+          17,
+          "SKILL"
+        ],
+        [
+          18,
+          28,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in public speaking and effective communication.",
+    {
+      "entities": [
+        [
+          11,
+          26,
+          "SKILL"
+        ],
+        [
+          27,
+          54,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept at data analysis with R and Python libraries.",
+    {
+      "entities": [
+        [
+          9,
+          27,
+          "SKILL"
+        ],
+        [
+          28,
+          29,
+          "SKILL"
+        ],
+        [
+          34,
+          40,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in content creation and video editing.",
+    {
+      "entities": [
+        [
+          15,
+          31,
+          "SKILL"
+        ],
+        [
+          36,
+          50,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in cloud services like AWS and Microsoft Azure.",
+    {
+      "entities": [
+        [
+          11,
+          28,
+          "SKILL"
+        ],
+        [
+          34,
+          41,
+          "SKILL"
+        ],
+        [
+          42,
+          58,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in supply chain management and logistics optimization.",
+    {
+      "entities": [
+        [
+          11,
+          34,
+          "SKILL"
+        ],
+        [
+          35,
+          61,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in user experience (UX) design principles.",
+    {
+      "entities": [
+        [
+          14,
+          37,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in healthcare administration and patient care.",
+    {
+      "entities": [
+        [
+          15,
+          40,
+          "SKILL"
+        ],
+        [
+          41,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in social media management and branding strategies.",
+    {
+      "entities": [
+        [
+          6,
+          32,
+          "SKILL"
+        ],
+        [
+          33,
+          56,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in technical writing and documentation.",
+    {
+      "entities": [
+        [
+          10,
+          30,
+          "SKILL"
+        ],
+        [
+          31,
+          48,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in negotiation and conflict resolution techniques.",
+    {
+      "entities": [
+        [
+          11,
+          22,
+          "SKILL"
+        ],
+        [
+          27,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in programming languages such as JavaScript and Ruby.",
+    {
+      "entities": [
+        [
+          11,
+          35,
+          "SKILL"
+        ],
+        [
+          41,
+          54,
+          "SKILL"
+        ],
+        [
+          55,
+          63,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in international relations and diplomacy.",
+    {
+      "entities": [
+        [
+          15,
+          38,
+          "SKILL"
+        ],
+        [
+          39,
+          52,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in web development and responsive design.",
+    {
+      "entities": [
+        [
+          10,
+          28,
+          "SKILL"
+        ],
+        [
+          29,
+          50,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in environmental science and sustainability practices.",
+    {
+      "entities": [
+        [
+          14,
+          38,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept at market research and data interpretation.",
+    {
+      "entities": [
+        [
+          9,
+          24,
+          "SKILL"
+        ],
+        [
+          29,
+          48,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in software testing and quality assurance processes.",
+    {
+      "entities": [
+        [
+          11,
+          27,
+          "SKILL"
+        ],
+        [
+          28,
+          49,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in manufacturing processes and quality control.",
+    {
+      "entities": [
+        [
+          15,
+          38,
+          "SKILL"
+        ],
+        [
+          39,
+          58,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in database management using Oracle and MySQL.",
+    {
+      "entities": [
+        [
+          11,
+          33,
+          "SKILL"
+        ],
+        [
+          40,
+          46,
+          "SKILL"
+        ],
+        [
+          51,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Fluent in Mandarin and English language instruction.",
+    {
+      "entities": [
+        [
+          7,
+          18,
+          "SKILL"
+        ],
+        [
+          19,
+          30,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in risk management and compliance auditing.",
+    {
+      "entities": [
+        [
+          10,
+          28,
+          "SKILL"
+        ],
+        [
+          29,
+          52,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in event planning and coordination.",
+    {
+      "entities": [
+        [
+          11,
+          25,
+          "SKILL"
+        ],
+        [
+          26,
+          42,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in public relations and media communication.",
+    {
+      "entities": [
+        [
+          15,
+          31,
+          "SKILL"
+        ],
+        [
+          36,
+          55,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in autoCAD and architectural design principles.",
+    {
+      "entities": [
+        [
+          11,
+          21,
+          "SKILL"
+        ],
+        [
+          22,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept at algorithm design and data structures.",
+    {
+      "entities": [
+        [
+          9,
+          25,
+          "SKILL"
+        ],
+        [
+          30,
+          45,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in photography and photo editing techniques.",
+    {
+      "entities": [
+        [
+          11,
+          22,
+          "SKILL"
+        ],
+        [
+          23,
+          40,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in non-profit management and community outreach.",
+    {
+      "entities": [
+        [
+          14,
+          38,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in e-commerce platforms and online sales.",
+    {
+      "entities": [
+        [
+          15,
+          35,
+          "SKILL"
+        ],
+        [
+          36,
+          52,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in business analysis and process improvement.",
+    {
+      "entities": [
+        [
+          11,
+          31,
+          "SKILL"
+        ],
+        [
+          32,
+          55,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in behavioral therapy and counseling techniques.",
+    {
+      "entities": [
+        [
+          6,
+          27,
+          "SKILL"
+        ],
+        [
+          28,
+          53,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in physical fitness training and nutrition.",
+    {
+      "entities": [
+        [
+          11,
+          36,
+          "SKILL"
+        ],
+        [
+          37,
+          50,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in sales forecasting and market trends analysis.",
+    {
+      "entities": [
+        [
+          15,
+          32,
+          "SKILL"
+        ],
+        [
+          33,
+          59,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in energy management and conservation programs.",
+    {
+      "entities": [
+        [
+          11,
+          31,
+          "SKILL"
+        ],
+        [
+          32,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in strategic planning and organizational development.",
+    {
+      "entities": [
+        [
+          10,
+          31,
+          "SKILL"
+        ],
+        [
+          32,
+          62,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in blockchain technology and cryptocurrency.",
+    {
+      "entities": [
+        [
+          14,
+          38,
+          "SKILL"
+        ],
+        [
+          39,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in mobile game development and UX design.",
+    {
+      "entities": [
+        [
+          6,
+          32,
+          "SKILL"
+        ],
+        [
+          33,
+          46,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in agricultural science and sustainable farming.",
+    {
+      "entities": [
+        [
+          11,
+          31,
+          "SKILL"
+        ],
+        [
+          32,
+          55,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in interior design and space planning.",
+    {
+      "entities": [
+        [
+          15,
+          30,
+          "SKILL"
+        ],
+        [
+          31,
+          49,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in Linux and system administration.",
+    {
+      "entities": [
+        [
+          11,
+          19,
+          "SKILL"
+        ],
+        [
+          20,
+          45,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled at customer service and client relations.",
+    {
+      "entities": [
+        [
+          11,
+          27,
+          "SKILL"
+        ],
+        [
+          28,
+          48,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in machine learning algorithms and data mining.",
+    {
+      "entities": [
+        [
+          14,
+          44,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in teaching methodologies and curriculum development.",
+    {
+      "entities": [
+        [
+          15,
+          37,
+          "SKILL"
+        ],
+        [
+          38,
+          64,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in quality assurance testing and process audits.",
+    {
+      "entities": [
+        [
+          11,
+          39,
+          "SKILL"
+        ],
+        [
+          40,
+          58,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in mobile device security and data protection.",
+    {
+      "entities": [
+        [
+          6,
+          31,
+          "SKILL"
+        ],
+        [
+          32,
+          51,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in logistics planning and inventory management.",
+    {
+      "entities": [
+        [
+          11,
+          29,
+          "SKILL"
+        ],
+        [
+          30,
+          54,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in writing and editing grant proposals.",
+    {
+      "entities": [
+        [
+          10,
+          20,
+          "SKILL"
+        ],
+        [
+          25,
+          48,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in neuroscience and psychological research.",
+    {
+      "entities": [
+        [
+          14,
+          29,
+          "SKILL"
+        ],
+        [
+          30,
+          56,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in strategic marketing and brand management.",
+    {
+      "entities": [
+        [
+          15,
+          34,
+          "SKILL"
+        ],
+        [
+          35,
+          55,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in risk assessment and emergency management.",
+    {
+      "entities": [
+        [
+          11,
+          29,
+          "SKILL"
+        ],
+        [
+          30,
+          54,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in international trade regulations and compliance.",
+    {
+      "entities": [
+        [
+          11,
+          42,
+          "SKILL"
+        ],
+        [
+          43,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept at negotiation skills within contractual agreements.",
+    {
+      "entities": [
+        [
+          9,
+          27,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in automotive engineering and vehicle design.",
+    {
+      "entities": [
+        [
+          10,
+          35,
+          "SKILL"
+        ],
+        [
+          36,
+          54,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in federal regulations and compliance standards.",
+    {
+      "entities": [
+        [
+          14,
+          36,
+          "SKILL"
+        ],
+        [
+          37,
+          61,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in international marketing and cross-cultural communication.",
+    {
+      "entities": [
+        [
+          15,
+          38,
+          "SKILL"
+        ],
+        [
+          39,
+          71,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in digital photography and image retouching.",
+    {
+      "entities": [
+        [
+          11,
+          33,
+          "SKILL"
+        ],
+        [
+          34,
+          54,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in home automation systems and IoT technology.",
+    {
+      "entities": [
+        [
+          11,
+          34,
+          "SKILL"
+        ],
+        [
+          35,
+          53,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in human resources management and employee engagement.",
+    {
+      "entities": [
+        [
+          6,
+          35,
+          "SKILL"
+        ],
+        [
+          40,
+          59,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in cloud computing and IT infrastructure.",
+    {
+      "entities": [
+        [
+          10,
+          28,
+          "SKILL"
+        ],
+        [
+          29,
+          50,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in agricultural technology and crop management.",
+    {
+      "entities": [
+        [
+          15,
+          38,
+          "SKILL"
+        ],
+        [
+          39,
+          58,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in customer relationship strategies and CRM tools.",
+    {
+      "entities": [
+        [
+          11,
+          46,
+          "SKILL"
+        ],
+        [
+          47,
+          60,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled at conducting market analysis and trend forecasting.",
+    {
+      "entities": [
+        [
+          11,
+          37,
+          "SKILL"
+        ],
+        [
+          38,
+          59,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept at user interface (UI) design and prototyping.",
+    {
+      "entities": [
+        [
+          9,
+          35,
+          "SKILL"
+        ],
+        [
+          36,
+          51,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in supply chain analytics and forecasting.",
+    {
+      "entities": [
+        [
+          14,
+          39,
+          "SKILL"
+        ],
+        [
+          40,
+          55,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in mobile application testing and quality assurance.",
+    {
+      "entities": [
+        [
+          15,
+          41,
+          "SKILL"
+        ],
+        [
+          46,
+          64,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in macroeconomics and financial reporting.",
+    {
+      "entities": [
+        [
+          11,
+          28,
+          "SKILL"
+        ],
+        [
+          29,
+          52,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in network security and cyber threat analysis.",
+    {
+      "entities": [
+        [
+          6,
+          25,
+          "SKILL"
+        ],
+        [
+          26,
+          51,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Competent in user research and usability testing.",
+    {
+      "entities": [
+        [
+          10,
+          26,
+          "SKILL"
+        ],
+        [
+          27,
+          48,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in social media analytics and consumer behavior.",
+    {
+      "entities": [
+        [
+          11,
+          33,
+          "SKILL"
+        ],
+        [
+          34,
+          55,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in statistics and data interpretation.",
+    {
+      "entities": [
+        [
+          14,
+          27,
+          "SKILL"
+        ],
+        [
+          28,
+          51,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in artistic direction and creative conceptualization.",
+    {
+      "entities": [
+        [
+          11,
+          32,
+          "SKILL"
+        ],
+        [
+          33,
+          63,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in pharmaceuticals and regulatory affairs.",
+    {
+      "entities": [
+        [
+          15,
+          30,
+          "SKILL"
+        ],
+        [
+          31,
+          53,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled in technical support and customer assistance.",
+    {
+      "entities": [
+        [
+          11,
+          28,
+          "SKILL"
+        ],
+        [
+          29,
+          52,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in brand development and market positioning.",
+    {
+      "entities": [
+        [
+          6,
+          26,
+          "SKILL"
+        ],
+        [
+          27,
+          49,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Knowledgeable in strategic sourcing and vendor management.",
+    {
+      "entities": [
+        [
+          14,
+          35,
+          "SKILL"
+        ],
+        [
+          36,
+          57,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Proficient in logistics software and distribution management.",
+    {
+      "entities": [
+        [
+          11,
+          32,
+          "SKILL"
+        ],
+        [
+          33,
+          60,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Experienced in risk communication and community engagement.",
+    {
+      "entities": [
+        [
+          15,
+          33,
+          "SKILL"
+        ],
+        [
+          34,
+          59,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Skilled at event marketing and promotions.",
+    {
+      "entities": [
+        [
+          11,
+          26,
+          "SKILL"
+        ],
+        [
+          27,
+          41,
+          "SKILL"
+        ]
+      ]
+    }
+  ],
+  [
+    "Adept in programming with PHP and Ruby on Rails.",
+    {
+      "entities": [
+        [
+          6,
+          20,
+          "SKILL"
+        ],
+        [
+          26,
+          33,
+          "SKILL"
+        ]
+      ]
+    }
+  ]
+]

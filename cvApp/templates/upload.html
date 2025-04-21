@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload CV</title>
+</head>
+<body>
+    <h1>Upload Your CV</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="cv" accept=".pdf" required>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
