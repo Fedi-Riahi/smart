@@ -56,6 +56,38 @@ TRAIN_DATA = [
     ("Worked on RESTful APIs and GraphQL.", {
         "entities": [(10, 22, "SKILL"), (27, 34, "SKILL")]  # RESTful APIs, GraphQL
     }),
+
+    # Personal Information
+    ("Contact me at john.doe@email.com or (123) 456-7890", {
+        "entities": []
+    }),
+    ("Located in New York, NY from January 2020 to present", {
+        "entities": []
+    }),
+
+    # Numbers and Quantities
+    ("Managed budget of $500,000 annually", {
+        "entities": []
+    }),
+    ("Led team of 15 developers across 3 locations", {
+        "entities": []
+    }),
+
+    # Job Titles and General Terms
+    ("Senior Software Engineer at Tech Company Inc.", {
+        "entities": []
+    }),
+    ("Responsible for product development lifecycle", {
+        "entities": []
+    }),
+
+    # Dates and Time Periods
+    ("Worked from Q1 2019 to Q3 2022", {
+        "entities": []
+    }),
+    ("Project completed in 6 months", {
+        "entities": []
+    }),
 ]
 
 def validate_train_data(data):

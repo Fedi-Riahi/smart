@@ -12,6 +12,7 @@ def upload_cv(request):
         # Extract text
         with pdfplumber.open(cv_file) as pdf:
             text = ''.join(page.extract_text() for page in pdf.pages if page.extract_text())
+            print("Extracted text: ", text);
         # Extract skills
         nlp = spacy.load("ner_model")
         doc = nlp(text)
