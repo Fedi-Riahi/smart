@@ -90,71 +90,131 @@ TRAIN_DATA = [
     }),
 ]
 
-def validate_train_data(data):
-    import spacy
-    nlp = spacy.load("en_core_web_sm")
-    for text, annot in data:
-        doc = nlp.make_doc(text)
-        # Print tokens for debugging
-        print(f"\nText: '{text}'")
-        print("Token | Index | Span")
-        print("-" * 30)
-        for token in doc:
-            print(f"{token.text:<12} | {token.idx:<5} | ({token.idx}, {token.idx + len(token.text)})")
-        # Validate entities
-        for start, end, label in annot["entities"]:
-            assert 0 <= start < end <= len(text), f"Invalid entity in '{text}': {start, end, label}"
-            assert text[start:end].strip(), f"Empty entity in '{text}': {start, end, label}"
-            # Check if span starts and ends at token boundaries
-            start_found = False
-            end_found = False
-            for token in doc:
-                if token.idx == start:
-                    start_found = True
-                if token.idx + len(token.text) == end:
-                    end_found = True
-            if not start_found:
-                print(f"Warning: Entity ({start}, {end}, '{label}') in '{text}' does not start at a token boundary")
-            if not end_found:
-                print(f"Warning: Entity ({start}, {end}, '{label}') in '{text}' does not end at a token boundary")
-        from spacy.training import offsets_to_biluo_tags
-        tags = offsets_to_biluo_tags(doc, annot["entities"])
-        if '-' in tags:
-            print(f"Misaligned entities in '{text}': {tags} | Entities: {annot['entities']}")
-            for i, (token, tag) in enumerate(zip(doc, tags)):
-                if tag == '-':
-                    print(f"  Token '{token.text}' at index {token.idx} is misaligned")
-            raise AssertionError(f"Misaligned entities detected in '{text}'")
-        print(f"Validated text: '{text}'")
-    print("All data validated successfully.")
+import random
+import spacy
+from spacy.training.example import Example
+from spacy.util import minibatch
 
-def generate_entity_spans(text, skills, label="SKILL"):
-    """Generate entity spans for given skills in text, ensuring token alignment."""
-    import spacy
-    nlp = spacy.load("en_core_web_sm")
-    doc = nlp.make_doc(text)
-    entities = []
-    for skill in skills:
-        # Find skill in text
-        start_idx = text.find(skill)
-        if start_idx == -1:
-            print(f"Skill '{skill}' not found in text: '{text}'")
-            continue
-        end_idx = start_idx + len(skill)
-        # Find tokens that cover the skill
-        skill_tokens = [token for token in doc if token.idx >= start_idx and token.idx < end_idx]
-        if not skill_tokens:
-            print(f"Skill '{skill}' at {start_idx}-{end_idx} does not align with tokens in '{text}'")
-            continue
-        # Check if skill spans whole tokens
-        if skill_tokens[0].idx == start_idx and skill_tokens[-1].idx + len(skill_tokens[-1].text) == end_idx:
-            entities.append((start_idx, end_idx, label))
-        else:
-            print(f"Skill '{skill}' at {start_idx}-{end_idx} is misaligned with tokens: {[t.text for t in skill_tokens]}")
-    return {"entities": sorted(entities)}  # Sort for consistency
+#------ TRAIN DATA ------
+# Load english core web medium model
+nlp = spacy.load("en_core_web_md")
 
-if __name__ == "__main__":
-    validate_train_data(TRAIN_DATA)
+# if the entity doesnt exists in pipe_names add it otherwise get it
+if 'ner' not in nlp.pipe_names:
+    ner = nlp.add_pipe('ner')
+else:
+    ner = nlp.get_pipe('ner')
+
+# get the right part ("entities") then we get ent[2] == "SKILL" and add it to the ner
+for _, annotations in TRAIN_DATA:
+    for ent in annotations['entities']:
+        if ent[2] not in ner.labels:
+            ner.add_label(ent[2])
+
+
+#------ TRAIN NER ------
+other_pipes = [pipe for pipe in nlp.pipe_names if pipe != 'ner']
+with nlp.disable_pipes(*other_pipes):
+    optimizer = nlp.initialize()
+
+    epochs = 50
+    for epoch in range(epochs):
+        random.shuffle(TRAIN_DATA)
+        losses = {}
+        batches = minibatch(TRAIN_DATA, size=4)
+        for batch in batches:
+            examples = []
+            for text, annotations in batch:
+                doc = nlp.make_doc(text)
+                example = Example.from_dict(doc, annotations)
+                examples.append(example)
+            nlp.update(examples, drop=0.5, losses=losses, sgd=optimizer)
+        print(f"Epoch {epoch + 1}, losses : {losses}")
+nlp.to_disk('ner_model')
+print(f"Model saved to ner_model")
+trained_nlp = spacy.load('ner_model')
+
+
+test_data = [
+    "Implemented CI/CD pipelines using Jenkins and GitLab CI."
+    "Managed infrastructure with Terraform and Ansible.",
+    "Containerized applications using Docker and Kubernetes.",
+    "Monitored systems with Prometheus and Grafana.",
+    "Automated deployments using Bash and Python scripts.",
+]
+
+for text in test_data:
+    doc = trained_nlp(text)
+    print(f"text : {text}")
+    print(f"Entitites", [(ent.text, ent.label_) for ent in doc.ents])
+    print()
+
+
+# def validate_train_data(data):
+#     import spacy
+#     nlp = spacy.load("en_core_web_sm")
+#     for text, annot in data:
+#         doc = nlp.make_doc(text)
+#         # Print tokens for debugging
+#         print(f"\nText: '{text}'")
+#         print("Token | Index | Span")
+#         print("-" * 30)
+#         for token in doc:
+#             print(f"{token.text:<12} | {token.idx:<5} | ({token.idx}, {token.idx + len(token.text)})")
+#         # Validate entities
+#         for start, end, label in annot["entities"]:
+#             assert 0 <= start < end <= len(text), f"Invalid entity in '{text}': {start, end, label}"
+#             assert text[start:end].strip(), f"Empty entity in '{text}': {start, end, label}"
+#             # Check if span starts and ends at token boundaries
+#             start_found = False
+#             end_found = False
+#             for token in doc:
+#                 if token.idx == start:
+#                     start_found = True
+#                 if token.idx + len(token.text) == end:
+#                     end_found = True
+#             if not start_found:
+#                 print(f"Warning: Entity ({start}, {end}, '{label}') in '{text}' does not start at a token boundary")
+#             if not end_found:
+#                 print(f"Warning: Entity ({start}, {end}, '{label}') in '{text}' does not end at a token boundary")
+#         from spacy.training import offsets_to_biluo_tags
+#         tags = offsets_to_biluo_tags(doc, annot["entities"])
+#         if '-' in tags:
+#             print(f"Misaligned entities in '{text}': {tags} | Entities: {annot['entities']}")
+#             for i, (token, tag) in enumerate(zip(doc, tags)):
+#                 if tag == '-':
+#                     print(f"  Token '{token.text}' at index {token.idx} is misaligned")
+#             raise AssertionError(f"Misaligned entities detected in '{text}'")
+#         print(f"Validated text: '{text}'")
+#     print("All data validated successfully.")
+
+# def generate_entity_spans(text, skills, label="SKILL"):
+#     """Generate entity spans for given skills in text, ensuring token alignment."""
+#     import spacy
+#     nlp = spacy.load("en_core_web_sm")
+#     doc = nlp.make_doc(text)
+#     entities = []
+#     for skill in skills:
+#         # Find skill in text
+#         start_idx = text.find(skill)
+#         if start_idx == -1:
+#             print(f"Skill '{skill}' not found in text: '{text}'")
+#             continue
+#         end_idx = start_idx + len(skill)
+#         # Find tokens that cover the skill
+#         skill_tokens = [token for token in doc if token.idx >= start_idx and token.idx < end_idx]
+#         if not skill_tokens:
+#             print(f"Skill '{skill}' at {start_idx}-{end_idx} does not align with tokens in '{text}'")
+#             continue
+#         # Check if skill spans whole tokens
+#         if skill_tokens[0].idx == start_idx and skill_tokens[-1].idx + len(skill_tokens[-1].text) == end_idx:
+#             entities.append((start_idx, end_idx, label))
+#         else:
+#             print(f"Skill '{skill}' at {start_idx}-{end_idx} is misaligned with tokens: {[t.text for t in skill_tokens]}")
+#     return {"entities": sorted(entities)}  # Sort for consistency
+
+# if __name__ == "__main__":
+#     validate_train_data(TRAIN_DATA)
     # Example usage of generate_entity_spans
     # text = "Knowledge of machine learning and deep learning."
     # skills = ["machine learning", "deep learning"]

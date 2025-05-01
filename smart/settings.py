@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from decouple import config
 
@@ -39,8 +40,8 @@ ROOT_URLCONF = 'smart.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        
-        'DIRS': [],
+
+        'DIRS': [os.path.join(BASE_DIR, 'cvApp/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

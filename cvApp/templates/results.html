@@ -1,26 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>CV Analysis</h1>
-    <h2>Extracted Skills</h2>
-    <ul>
-        {% for skill in cv.extracted_data.skills %}
-            <li>{{ skill }}</li>
-        {% empty %}
-            <li>No skills found.</li>
-        {% endfor %}
-    </ul>
-    <h2>Suggestions</h2>
-    <ul>
-        {% for suggestion in cv.extracted_data.suggestions %}
-            <li>{{ suggestion }}</li>
-        {% empty %}
-            <li>Your CV looks good!</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'upload_cv' %}">Upload Another CV</a>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">CV Analysis Results</h1>
+        <div class="mb-4">
+            <h2 class="text-lg font-semibold mb-2">Extracted Skills:</h2>
+            {% if cv.extracted_data.skills %}
+                <ul class="list-disc pl-5">
+                    {% for skill in cv.extracted_data.skills %}
+                        <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500">No skills detected.</p>
+            {% endif %}
+        </div>
+        {% if cv.extracted_data.suggestions %}
+            <div class="mt-4">
+                <h2 class="text-lg font-semibold mb-2">Suggestions:</h2>
+                <ul class="list-disc pl-5">
+                    {% for suggestion in cv.extracted_data.suggestions %}
+                        <li>{{ suggestion }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <a href="{% url 'upload_cv' %}" class="block w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-6 text-center">Upload Another CV</a>
+    </div>
 </body>
 </html>
