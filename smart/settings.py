@@ -99,5 +99,14 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'cvApp/static')]
 
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/upload/'  # Redirect to upload page after login
+LOGOUT_REDIRECT_URL = '/login/'
+#DeepSeek API Configuration
+# OpenAI Configuration
+OPENROUTER_API_KEY = config('API_KEY')  # Add to .env
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+DEEPSEEK_MODEL = "deepseek/deepseek-r1:free"  # Free tier model
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

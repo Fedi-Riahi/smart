@@ -1,221 +1,306 @@
-TRAIN_DATA = [
-    # Programming Languages
-    ("Skilled in Python, Java, and C++.", {
-        "entities": [(11, 17, "SKILL"), (19, 23, "SKILL"), (29, 32, "SKILL")]  # Python, Java, C++
-    }),
-    ("Proficient in JavaScript, TypeScript, and Go.", {
-        "entities": [(14, 24, "SKILL"), (26, 36, "SKILL"), (42, 44, "SKILL")]  # JavaScript, TypeScript, Go
-    }),
-    ("Experience with Ruby, PHP, and Swift.", {
-        "entities": [(16, 20, "SKILL"), (22, 25, "SKILL"), (31, 36, "SKILL")]  # Ruby, PHP, Swift
-    }),
-    ("Worked with R, MATLAB, and Scala.", {
-        "entities": [(12, 13, "SKILL"), (15, 21, "SKILL"), (27, 32, "SKILL")]  # R, MATLAB, Scala
-    }),
-
-    # Frameworks & Libraries
-    ("Developed apps using React, Angular, and Vue.js.", {
-        "entities": [(21, 26, "SKILL"), (28, 35, "SKILL"), (41, 47, "SKILL")]  # React, Angular, Vue.js
-    }),
-    ("Built APIs with Django, Flask, and Spring Boot.", {
-        "entities": [(16, 22, "SKILL"), (24, 29, "SKILL"), (35, 46, "SKILL")]  # Django, Flask, Spring Boot
-    }),
-    ("Used TensorFlow, PyTorch, and Keras for ML projects.", {
-        "entities": [(5, 15, "SKILL"), (17, 24, "SKILL"), (30, 35, "SKILL")]  # TensorFlow, PyTorch, Keras
-    }),
-
-    # Databases & DevOps
-    ("Managed databases like MySQL, PostgreSQL, and MongoDB.", {
-        "entities": [(23, 28, "SKILL"), (30, 40, "SKILL"), (46, 53, "SKILL")]  # MySQL, PostgreSQL, MongoDB
-    }),
-    ("Deployed apps on AWS, Azure, and Google Cloud.", {
-        "entities": [(17, 20, "SKILL"), (22, 27, "SKILL"), (33, 45, "SKILL")]  # AWS, Azure, Google Cloud
-    }),
-    ("Implemented CI/CD using Jenkins, Docker, and Kubernetes.", {
-        "entities": [(24, 31, "SKILL"), (33, 39, "SKILL"), (45, 55, "SKILL")]  # Jenkins, Docker, Kubernetes
-    }),
-
-    # Methodologies & Tools
-    ("Followed Agile, Scrum, and Kanban methodologies.", {
-        "entities": [(9, 14, "SKILL"), (16, 21, "SKILL"), (27, 33, "SKILL")]  # Agile, Scrum, Kanban
-    }),
-    ("Used Git, Jira, and VS Code for development.", {
-        "entities": [(5, 8, "SKILL"), (10, 14, "SKILL"), (20, 27, "SKILL")]  # Git, Jira, VS Code
-    }),
-
-    # Edge Cases & Variations
-    ("Expert in Node.js and Express framework.", {
-        "entities": [(10, 17, "SKILL"), (22, 29, "SKILL")]  # Node.js, Express
-    }),
-    ("Familiar with .NET Core and Entity Framework.", {
-        "entities": [(14, 23, "SKILL"), (28, 44, "SKILL")]  # .NET Core, Entity Framework
-    }),
-    ("Knowledge of machine learning and deep learning.", {
-        "entities": [(13, 29, "SKILL"), (34, 47, "SKILL")]  # machine learning, deep learning
-    }),
-    ("Worked on RESTful APIs and GraphQL.", {
-        "entities": [(10, 22, "SKILL"), (27, 34, "SKILL")]  # RESTful APIs, GraphQL
-    }),
-
-    # Personal Information
-    ("Contact me at john.doe@email.com or (123) 456-7890", {
-        "entities": []
-    }),
-    ("Located in New York, NY from January 2020 to present", {
-        "entities": []
-    }),
-
-    # Numbers and Quantities
-    ("Managed budget of $500,000 annually", {
-        "entities": []
-    }),
-    ("Led team of 15 developers across 3 locations", {
-        "entities": []
-    }),
-
-    # Job Titles and General Terms
-    ("Senior Software Engineer at Tech Company Inc.", {
-        "entities": []
-    }),
-    ("Responsible for product development lifecycle", {
-        "entities": []
-    }),
-
-    # Dates and Time Periods
-    ("Worked from Q1 2019 to Q3 2022", {
-        "entities": []
-    }),
-    ("Project completed in 6 months", {
-        "entities": []
-    }),
-]
-
-import random
 import spacy
 from spacy.training.example import Example
 from spacy.util import minibatch
+from spacy.scorer import Scorer
+import random
+import pandas as pd
+from pathlib import Path
+from typing import List, Tuple, Dict, Any
+import logging
+import time
 
-#------ TRAIN DATA ------
-# Load english core web medium model
-nlp = spacy.load("en_core_web_md")
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
-# if the entity doesnt exists in pipe_names add it otherwise get it
-if 'ner' not in nlp.pipe_names:
-    ner = nlp.add_pipe('ner')
-else:
-    ner = nlp.get_pipe('ner')
+# Expanded list of predefined skills (adjusted to reduce substring overlaps)
+SKILLS = [
+    # Programming Languages
+    "Python", "Java", "C++", "JavaScript", "TypeScript", "Go", "Ruby", "PHP", "Swift", "R",
+    "MATLAB", "Scala", "Kotlin", "Rust", "Perl", "C#", "Objective-C", "Shell", "PowerShell",
+    "SQL", "HTML", "CSS", "Dart", "Lua", "VBA",
 
-# get the right part ("entities") then we get ent[2] == "SKILL" and add it to the ner
-for _, annotations in TRAIN_DATA:
-    for ent in annotations['entities']:
-        if ent[2] not in ner.labels:
-            ner.add_label(ent[2])
+    # Frameworks and Libraries
+    "React", "Angular", "Vue.js", "Django", "Flask", "Spring Boot", "Node.js", "Express",
+    ".NET Core", "TensorFlow", "PyTorch", "Keras", "Pandas", "NumPy", "Scikit-learn",
+    "FastAPI", "Ruby on Rails", "Laravel", "Symfony", "Bootstrap", "jQuery", "D3.js",
+    "OpenCV", "Hadoop", "Spark",
 
+    # Databases and Cloud Platforms
+    "MySQL", "PostgreSQL", "MongoDB", "SQLite", "Oracle", "SQL Server", "Redis", "Cassandra",
+    "Elasticsearch", "DynamoDB", "Snowflake", "BigQuery", "AWS", "Azure", "Google Cloud",
+    "Firebase", "Heroku", "Salesforce", "SAP",
 
-#------ TRAIN NER ------
-other_pipes = [pipe for pipe in nlp.pipe_names if pipe != 'ner']
-with nlp.disable_pipes(*other_pipes):
-    optimizer = nlp.initialize()
+    # DevOps and Tools
+    "Jenkins", "Docker", "Kubernetes", "Terraform", "Ansible", "Git", "GitHub", "GitLab",
+    "Bitbucket", "Jira", "Trello", "Confluence", "Prometheus", "Grafana", "Nagios",
+    "CircleCI", "Travis CI", "Bamboo", "VS Code", "IntelliJ IDEA", "Eclipse", "PyCharm",
 
-    epochs = 50
-    for epoch in range(epochs):
-        random.shuffle(TRAIN_DATA)
-        losses = {}
-        batches = minibatch(TRAIN_DATA, size=4)
-        for batch in batches:
-            examples = []
-            for text, annotations in batch:
-                doc = nlp.make_doc(text)
-                example = Example.from_dict(doc, annotations)
-                examples.append(example)
-            nlp.update(examples, drop=0.5, losses=losses, sgd=optimizer)
-        print(f"Epoch {epoch + 1}, losses : {losses}")
-nlp.to_disk('ner_model')
-print(f"Model saved to ner_model")
-trained_nlp = spacy.load('ner_model')
+    # Methodologies and Processes
+    "Agile", "Scrum", "Kanban", "DevOps", "CI/CD", "TDD", "BDD", "Lean", "Six Sigma",
+    "project management", "risk management", "change management",
 
+    # Hospitality Systems
+    "Micros", "Hilton OnQ", "Opera PMS", "Fidelio", "Holidex", "Sabre", "Amadeus",
 
-test_data = [
-    "Implemented CI/CD pipelines using Jenkins and GitLab CI."
-    "Managed infrastructure with Terraform and Ansible.",
-    "Containerized applications using Docker and Kubernetes.",
-    "Monitored systems with Prometheus and Grafana.",
-    "Automated deployments using Bash and Python scripts.",
+    # Data Science and Analytics
+    "machine learning", "deep learning", "data analysis", "data visualization", "statistics",
+    "Power BI", "Tableau", "Excel", "R Studio", "Jupyter", "Matplotlib", "Seaborn",
+
+    # Business and HR Skills
+    "Customer Service", "medical billing", "advertising", "marketing", "payroll",
+    "employee relations", "performance reviews", "recruitment", "training",
+    "compensation management", "benefits administration", "labor relations",
+    "public relations", "financial management", "budgeting", "accounting",
+
+    # Web and Digital Marketing
+    "SEO", "SEM", "Google Analytics", "Facebook Ads", "WordPress", "Shopify",
+    "content management", "digital marketing", "social media marketing",
+
+    # Other Technical Skills
+    "SharePoint", "RESTful APIs", "GraphQL", "SOAP", "Linux", "Unix", "Windows Server",
+    "network administration", "cybersecurity", "penetration testing", "VMware", "Hyper-V"
 ]
 
-for text in test_data:
-    doc = trained_nlp(text)
-    print(f"text : {text}")
-    print(f"Entitites", [(ent.text, ent.label_) for ent in doc.ents])
-    print()
+def estimate_eta(step: str, data_size: int = 0) -> float:
+    """Estimate ETA in seconds for each step based on step type and data size."""
+    if step == "extract_csv":
+        return 0.5  # Fast CSV reading
+    elif step == "create_train_data":
+        return max(5, data_size * 0.2)  # ~0.2s per resume
+    elif step == "validate_data":
+        return max(2, data_size * 0.1)  # ~0.1s per resume
+    elif step == "train_model":
+        return max(300, data_size * 10)  # ~10s per resume, min 5min
+    elif step == "evaluate_model":
+        return 5  # Small subset, quick
+    elif step == "test_model":
+        return 3  # Few test texts, very quick
+    return 0
 
+def extract_resume_texts_from_csv(csv_path: str = "resumes/Resume.csv") -> List[str]:
+    """Extract resume texts from the 'Resume_str' column of a CSV file."""
+    csv_path = Path(csv_path)
+    if not csv_path.exists():
+        logger.error(f"CSV file {csv_path} does not exist.")
+        return []
 
-# def validate_train_data(data):
-#     import spacy
-#     nlp = spacy.load("en_core_web_sm")
-#     for text, annot in data:
-#         doc = nlp.make_doc(text)
-#         # Print tokens for debugging
-#         print(f"\nText: '{text}'")
-#         print("Token | Index | Span")
-#         print("-" * 30)
-#         for token in doc:
-#             print(f"{token.text:<12} | {token.idx:<5} | ({token.idx}, {token.idx + len(token.text)})")
-#         # Validate entities
-#         for start, end, label in annot["entities"]:
-#             assert 0 <= start < end <= len(text), f"Invalid entity in '{text}': {start, end, label}"
-#             assert text[start:end].strip(), f"Empty entity in '{text}': {start, end, label}"
-#             # Check if span starts and ends at token boundaries
-#             start_found = False
-#             end_found = False
-#             for token in doc:
-#                 if token.idx == start:
-#                     start_found = True
-#                 if token.idx + len(token.text) == end:
-#                     end_found = True
-#             if not start_found:
-#                 print(f"Warning: Entity ({start}, {end}, '{label}') in '{text}' does not start at a token boundary")
-#             if not end_found:
-#                 print(f"Warning: Entity ({start}, {end}, '{label}') in '{text}' does not end at a token boundary")
-#         from spacy.training import offsets_to_biluo_tags
-#         tags = offsets_to_biluo_tags(doc, annot["entities"])
-#         if '-' in tags:
-#             print(f"Misaligned entities in '{text}': {tags} | Entities: {annot['entities']}")
-#             for i, (token, tag) in enumerate(zip(doc, tags)):
-#                 if tag == '-':
-#                     print(f"  Token '{token.text}' at index {token.idx} is misaligned")
-#             raise AssertionError(f"Misaligned entities detected in '{text}'")
-#         print(f"Validated text: '{text}'")
-#     print("All data validated successfully.")
+    try:
+        df = pd.read_csv(csv_path, encoding='utf-8')
+        if 'Resume_str' not in df.columns:
+            logger.error("CSV file must contain a 'Resume_str' column.")
+            return []
 
-# def generate_entity_spans(text, skills, label="SKILL"):
-#     """Generate entity spans for given skills in text, ensuring token alignment."""
-#     import spacy
-#     nlp = spacy.load("en_core_web_sm")
-#     doc = nlp.make_doc(text)
-#     entities = []
-#     for skill in skills:
-#         # Find skill in text
-#         start_idx = text.find(skill)
-#         if start_idx == -1:
-#             print(f"Skill '{skill}' not found in text: '{text}'")
-#             continue
-#         end_idx = start_idx + len(skill)
-#         # Find tokens that cover the skill
-#         skill_tokens = [token for token in doc if token.idx >= start_idx and token.idx < end_idx]
-#         if not skill_tokens:
-#             print(f"Skill '{skill}' at {start_idx}-{end_idx} does not align with tokens in '{text}'")
-#             continue
-#         # Check if skill spans whole tokens
-#         if skill_tokens[0].idx == start_idx and skill_tokens[-1].idx + len(skill_tokens[-1].text) == end_idx:
-#             entities.append((start_idx, end_idx, label))
-#         else:
-#             print(f"Skill '{skill}' at {start_idx}-{end_idx} is misaligned with tokens: {[t.text for t in skill_tokens]}")
-#     return {"entities": sorted(entities)}  # Sort for consistency
+        # Filter out empty or invalid texts
+        resume_texts = [str(text) for text in df['Resume_str'] if pd.notna(text) and str(text).strip()]
+        if not resume_texts:
+            logger.warning("No valid resume texts found in CSV.")
+        else:
+            logger.info(f"Extracted {len(resume_texts)} resume texts from {csv_path}")
+        return resume_texts
 
-# if __name__ == "__main__":
-#     validate_train_data(TRAIN_DATA)
-    # Example usage of generate_entity_spans
-    # text = "Knowledge of machine learning and deep learning."
-    # skills = ["machine learning", "deep learning"]
-    # print(generate_entity_spans(text, skills))
+    except Exception as e:
+        logger.error(f"Error reading CSV file {csv_path}: {e}")
+        return []
+
+def generate_entity_spans(text: str, skills: List[str] = SKILLS, label: str = "SKILL") -> Dict[str, Any]:
+    """Generate non-overlapping entity spans for given skills in text, ensuring token alignment."""
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp.make_doc(text)
+    entities = []
+
+    # Sort skills by length (descending) to prioritize longer matches
+    sorted_skills = sorted(skills, key=len, reverse=True)
+
+    for skill in sorted_skills:
+        start_idx = 0
+        while start_idx != -1:
+            start_idx = text.lower().find(skill.lower(), start_idx)
+            if start_idx == -1:
+                break
+            end_idx = start_idx + len(skill)
+            # Verify token alignment
+            skill_tokens = [t for t in doc if t.idx >= start_idx and t.idx < end_idx]
+            if skill_tokens and skill_tokens[0].idx == start_idx and skill_tokens[-1].idx + len(skill_tokens[-1].text) == end_idx:
+                # Check for overlap with existing entities
+                overlaps = any(
+                    (e_start <= start_idx < e_end) or (start_idx <= e_start < end_idx)
+                    for e_start, e_end, _ in entities
+                )
+                if not overlaps:
+                    entities.append((start_idx, end_idx, label))
+                else:
+                    logger.debug(f"Skipped overlapping skill '{skill}' at {start_idx}-{end_idx} in text: '{text[start_idx:end_idx]}'")
+            else:
+                logger.debug(f"Skill '{skill}' at {start_idx}-{end_idx} misaligned in text: '{text[:50]}...'")
+            start_idx += 1
+
+    return {"entities": sorted(entities, key=lambda x: x[0])}
+
+def validate_train_data(data: List[Tuple[str, Dict[str, Any]]]) -> None:
+    """Validate training data to ensure entity spans are correctly aligned and non-overlapping."""
+    nlp = spacy.load("en_core_web_sm")
+    for text, annot in data:
+        doc = nlp.make_doc(text)
+        for start, end, label in annot["entities"]:
+            if not (0 <= start < end <= len(text)):
+                raise ValueError(f"Invalid entity in '{text[:50]}...': {start, end, label}")
+            if not text[start:end].strip():
+                raise ValueError(f"Empty entity in '{text[:50]}...': {start, end, label}")
+            # Check token boundaries
+            start_found = any(token.idx == start for token in doc)
+            end_found = any(token.idx + len(token.text) == end for token in doc)
+            if not start_found or not end_found:
+                logger.warning(f"Entity ({start}, {end}, '{label}') in '{text[:50]}...' may not align with token boundaries")
+
+        from spacy.training import offsets_to_biluo_tags
+        tags = offsets_to_biluo_tags(doc, annot["entities"])
+        if '-' in tags:
+            raise ValueError(f"Misaligned entities in '{text[:50]}...': {tags} | Entities: {annot['entities']}")
+
+    logger.info("All training data validated successfully")
+
+def create_train_data(resume_texts: List[str], skills: List[str] = SKILLS) -> List[Tuple[str, Dict[str, Any]]]:
+    """Create training data by generating entity annotations for resume texts."""
+    train_data = []
+    for text in resume_texts:
+        text = " ".join(text.split())  # Normalize whitespace
+        if not text:
+            continue
+        annotations = generate_entity_spans(text, skills)
+        if annotations["entities"]:
+            train_data.append((text, annotations))
+
+    logger.info(f"Created {len(train_data)} training examples")
+    return train_data
+
+def train_ner_model(
+    train_data: List[Tuple[str, Dict[str, Any]]],
+    output_dir: str = "cvApp/ner_model",
+    epochs: int = 50,
+    batch_size: int = 8
+) -> spacy.language.Language:
+    """Train a NER model to recognize skills."""
+    nlp = spacy.load("en_core_web_md")
+
+    # Add or get NER pipe
+    if 'ner' not in nlp.pipe_names:
+        ner = nlp.add_pipe('ner')
+    else:
+        ner = nlp.get_pipe('ner')
+
+    # Add SKILL label
+    for _, annotations in train_data:
+        for ent in annotations['entities']:
+            if ent[2] not in ner.labels:
+                ner.add_label(ent[2])
+
+    # Disable other pipes
+    other_pipes = [pipe for pipe in nlp.pipe_names if pipe != 'ner']
+    with nlp.disable_pipes(*other_pipes):
+        optimizer = nlp.initialize()
+        for epoch in range(epochs):
+            random.shuffle(train_data)
+            losses = {}
+            batches = minibatch(train_data, size=batch_size)
+            for batch in batches:
+                examples = []
+                for text, annotations in batch:
+                    doc = nlp.make_doc(text)
+                    example = Example.from_dict(doc, annotations)
+                    examples.append(example)
+                nlp.update(examples, drop=0.5, losses=losses, sgd=optimizer)
+            logger.info(f"Epoch {epoch + 1}, Losses: {losses}")
+
+    # Save model
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    nlp.to_disk(output_path)
+    logger.info(f"Model saved to {output_dir}")
+    return spacy.load(output_dir)
+
+def evaluate_model(
+    nlp: spacy.language.Language,
+    test_data: List[Tuple[str, Dict[str, Any]]]
+) -> Dict[str, Any]:
+    """Evaluate the trained NER model."""
+    scorer = Scorer()
+    for text, annotations in test_data:
+        doc = nlp.make_doc(text)
+        example = Example.from_dict(doc, annotations)
+        scorer.update([example])
+    logger.info(f"Evaluation scores: {scorer.scores}")
+    return scorer.scores
+
+def test_model(nlp: spacy.language.Language, test_texts: List[str]) -> None:
+    """Test the model on new texts and print detected entities."""
+    for text in test_texts:
+        doc = nlp(text)
+        entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ == "SKILL"]
+        logger.info(f"Text: {text}")
+        logger.info(f"Entities: {entities}")
+
+def main():
+    # Step 1: Extract resume texts from CSV
+    logger.info(f"Step 1: Extracting resume texts from CSV. ETA: {estimate_eta('extract_csv'):.2f} seconds")
+    start_time = time.time()
+    resume_texts = extract_resume_texts_from_csv(csv_path="resumes/Resume.csv")
+    duration = time.time() - start_time
+    logger.info(f"Step 1 completed in {duration:.2f} seconds")
+
+    if not resume_texts:
+        logger.error("No resume texts extracted. Exiting.")
+        return
+
+    # Step 2: Create training data
+    logger.info(f"Step 2: Creating training data. ETA: {estimate_eta('create_train_data', len(resume_texts)):.2f} seconds")
+    start_time = time.time()
+    train_data = create_train_data(resume_texts)
+    duration = time.time() - start_time
+    logger.info(f"Step 2 completed in {duration:.2f} seconds")
+
+    if not train_data:
+        logger.error("No training data generated. Exiting.")
+        return
+
+    # Step 3: Validate training data
+    logger.info(f"Step 3: Validating training data. ETA: {estimate_eta('validate_data', len(train_data)):.2f} seconds")
+    start_time = time.time()
+    try:
+        validate_train_data(train_data)
+    except ValueError as e:
+        logger.error(f"Validation failed: {e}")
+        return
+    duration = time.time() - start_time
+    logger.info(f"Step 3 completed in {duration:.2f} seconds")
+
+    # Step 4: Train the model
+    logger.info(f"Step 4: Training NER model. ETA: {estimate_eta('train_model', len(train_data)):.2f} seconds")
+    start_time = time.time()
+    trained_nlp = train_ner_model(train_data, output_dir="cvApp/ner_model")
+    duration = time.time() - start_time
+    logger.info(f"Step 4 completed in {duration:.2f} seconds")
+
+    # Step 5: Evaluate the model
+    logger.info(f"Step 5: Evaluating model. ETA: {estimate_eta('evaluate_model'):.2f} seconds")
+    start_time = time.time()
+    evaluate_model(trained_nlp, train_data[:min(5, len(train_data))])
+    duration = time.time() - start_time
+    logger.info(f"Step 5 completed in {duration:.2f} seconds")
+
+    # Step 6: Test the model
+    logger.info(f"Step 6: Testing model. ETA: {estimate_eta('test_model'):.2f} seconds")
+    start_time = time.time()
+    test_texts = [
+        "Implemented CI/CD pipelines using Jenkins and GitLab CI.",
+        "Managed infrastructure with Terraform and Ansible.",
+        "Containerized applications using Docker and Kubernetes.",
+        "Monitored systems with Prometheus and Grafana.",
+        "Automated deployments using Bash and Python scripts."
+    ]
+    test_model(trained_nlp, test_texts)
+    duration = time.time() - start_time
+    logger.info(f"Step 6 completed in {duration:.2f} seconds")
+
+if __name__ == "__main__":
+    main()
