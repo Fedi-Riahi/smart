@@ -10,4 +10,5 @@ urlpatterns = [
     path('download/<int:cv_id>/', views.download_modified_cv, name='download_modified_cv'),
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('cv/<int:cv_id>/generate-optimized/', views.generate_optimized_cv, name='generate_optimized_cv'),
 ]

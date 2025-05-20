@@ -4,474 +4,1125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Analysis Results</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PDF.js Library -->
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
-    <!-- Add Inter font for modern typography -->
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <title>CV Analysis | CareerCraft AI</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js" integrity="sha512-ml/QKfG3+Yes6TwOzQb7aCNtJF4PUyha6R3w8pSTo/VJSywl7ZreYvvtUso7fKevpsI+pYVVwnu82YO0q3V6eg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        html { font-family: 'Inter', sans-serif; }
-        @supports (font-variation-settings: normal) {
-            html { font-family: 'Inter var', sans-serif; }
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e6f0fd;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #4bb543;
+            --warning: #fca311;
+            --danger: #f72585;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
         }
 
-        /* Custom animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
         }
 
-        /* Custom scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 10px;
+        /* Header */
+        .header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
         }
 
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
         }
 
-        /* Skill badge styles */
-        .skill-badge {
-            transition: all 0.2s ease;
+        .logo-icon {
+            color: var(--primary);
+            font-size: 1.5rem;
         }
 
-        .skill-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .nav-links {
+            display: flex;
+            gap: 25px;
         }
 
-        /* Section editing styles */
-        .section-edit-card {
-            transition: all 0.2s ease;
-            border-left: 4px solid transparent;
+        .nav-link {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .section-edit-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border-left-color: #3b82f6;
+        .nav-link:hover {
+            color: var(--primary);
         }
 
-        .section-edit-card.active {
-            border-left-color: #3b82f6;
-            background-color: #f8fafc;
+        .nav-link i {
+            font-size: 0.9rem;
         }
 
-        /* PDF container */
-        .pdf-container {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        /* Toggle switch */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #3b82f6;
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
         }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #3b82f6;
+
+        /* Main Content */
+        .main-content {
+            padding: 30px 0;
         }
-    </style>
-    <script>
-        // Custom Tailwind configuration
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        },
-                        section: {
-                            summary: '#3b82f6',
-                            experience: '#10b981',
-                            education: '#8b5cf6',
-                            skills: '#f59e0b',
-                            projects: '#ec4899',
-                            certifications: '#14b8a6'
-                        }
-                    },
-                    boxShadow: {
-                        subtle: '0 2px 6px rgba(0, 0, 0, 0.05)',
-                        card: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
-                    }
-                }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .page-subtitle {
+            color: var(--gray);
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 25px;
+        }
+
+        @media (max-width: 1200px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
             }
         }
-    </script>
+
+        /* CV Preview Card */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            padding: 18px 25px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* PDF Viewer */
+        .pdf-viewer-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #pdf-viewer {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: #525659;
+        }
+
+        #pdf-canvas {
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .pdf-control-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .pdf-control-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .pdf-control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 0.9rem;
+            color: var(--gray);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* CV Sections */
+        .sections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .section-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid var(--gray-light);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .section-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.1);
+        }
+
+        .section-item.active {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .section-icon.summary {
+            background-color: #4361ee;
+        }
+
+        .section-icon.experience {
+            background-color: #4cc9f0;
+        }
+
+        .section-icon.education {
+            background-color: #7209b7;
+        }
+
+        .section-icon.skills {
+            background-color: #f72585;
+        }
+
+        .section-icon.projects {
+            background-color: #4895ef;
+        }
+
+        .section-icon.certifications {
+            background-color: #3a0ca3;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: var(--dark);
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .edit-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .edit-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .section-content {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Editor Panel */
+        .editor-panel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-panel.active {
+            right: 0;
+        }
+
+        .editor-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .close-editor {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background-color: var(--gray-light);
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .close-editor:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .editor-body {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .editor-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--gray-light);
+            color: var(--gray);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        /* ATS Score */
+        .ats-score-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ats-score-circle {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .ats-score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .ats-score-label {
+            font-size: 1rem;
+            color: var(--gray);
+        }
+
+        .ats-feedback {
+            flex-grow: 1;
+        }
+
+        .ats-feedback-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .ats-feedback-list {
+            list-style-type: none;
+        }
+
+        .ats-feedback-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .ats-feedback-item i {
+            color: var(--primary);
+            margin-top: 3px;
+        }
+
+        /* Suggestions */
+        .suggestions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .suggestion-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid var(--gray-light);
+        }
+
+        .suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .suggestion-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .suggestion-content {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .suggestion-list {
+            list-style-type: none;
+            margin-top: 10px;
+        }
+
+        .suggestion-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .suggestion-list-item i {
+            color: var(--primary);
+            margin-top: 3px;
+            font-size: 0.8rem;
+        }
+
+        /* Skills */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .skill-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 0;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pdf-viewer-container {
+                height: 400px;
+            }
+
+            .editor-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .editor-panel.active {
+                right: 0;
+            }
+        }
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body>
     <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-subtle">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <h1 class="text-2xl font-bold text-slate-800">CV Analysis Results</h1>
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Premium</span>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-rocket logo-icon"></i>
+                    <span>CareerCraft AI</span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a href="{% url 'upload_cv' %}" class="text-sm font-medium text-slate-600 hover:text-primary-600 transition-colors duration-200">
-                        Upload Another CV
+                <div class="nav-links">
+                    <a href="{% url 'upload_cv' %}" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
                     </a>
-                    <a href="{% url 'logout' %}" class="text-sm font-medium text-slate-600 hover:text-primary-600 transition-colors duration-200">
-                        Log Out
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
                     </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+                <div class="user-menu">
+                    <div class="user-avatar">{{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}</div>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left Column: CV Preview -->
-            <div class="lg:col-span-7 space-y-6 animate-fade-in" style="animation-delay: 0.1s;">
-                <!-- CV Preview Card -->
-                <div class="bg-white rounded-xl shadow-card overflow-hidden">
-                    <div class="border-b border-slate-200 p-4">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-semibold text-slate-800">CV Preview</h2>
-                            <div class="flex items-center space-x-4">
-                                <div class="flex items-center">
-                                    <span class="text-sm text-slate-600 mr-2">Edit Mode:</span>
-                                    <div class="relative inline-block w-12 mr-2 align-middle select-none">
-                                        <input type="checkbox" name="edit-mode" id="edit-mode-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-                                        <label for="edit-mode-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
-                                    </div>
-                                    <label for="edit-mode-toggle" class="text-sm text-slate-600">Section Edit</label>
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">CV Analysis Results</h1>
+            <p class="page-subtitle">Review your CV analysis, get improvement suggestions, and optimize for ATS</p>
+
+            <div class="grid-layout">
+                <!-- Left Column -->
+                <div class="left-column">
+                    <!-- ATS Score Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">ATS Score & Feedback</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="ats-score-container">
+                                <div class="ats-score-circle">
+                                    <svg width="120" height="120" viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="54" fill="none" stroke="#e9ecef" stroke-width="12"/>
+                                        <circle cx="60" cy="60" r="54" fill="none" stroke="#4361ee" stroke-width="12"
+                                                stroke-dasharray="339.292" :stroke-dashoffset="339.292 - (3.39292 * atsScore)"/>
+                                    </svg>
+                                    <div class="ats-score-value">{{ ats_score }}</div>
+                                    <div class="ats-score-label">/100</div>
                                 </div>
-                                <div class="pdf-controls flex items-center space-x-2">
-                                    <button id="prev-page-btn" class="p-2 rounded-md hover:bg-slate-100 text-slate-600 transition-colors duration-200">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                    </button>
-                                    <span id="page-info" class="text-sm text-slate-600">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span>
-                                    <button id="next-page-btn" class="p-2 rounded-md hover:bg-slate-100 text-slate-600 transition-colors duration-200">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </button>
+                                <div class="ats-feedback">
+                                    <h3 class="ats-feedback-title">Key Improvement Areas</h3>
+                                    <div class="ats-categories">
+                                        <div class="ats-category">
+                                            <div class="ats-category-header">
+                                                <span class="ats-category-name">Keywords Match</span>
+                                                <span class="ats-category-score">{{ keyword_score }}/25</span>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" :style="'width: ' + (keyword_score/25*100) + '%'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="ats-category">
+                                            <div class="ats-category-header">
+                                                <span class="ats-category-name">Formatting</span>
+                                                <span class="ats-category-score">{{ format_score }}/20</span>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" :style="'width: ' + (format_score/20*100) + '%'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="ats-category">
+                                            <div class="ats-category-header">
+                                                <span class="ats-category-name">Experience Relevance</span>
+                                                <span class="ats-category-score">{{ experience_score }}/25</span>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" :style="'width: ' + (experience_score/25*100) + '%'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="ats-category">
+                                            <div class="ats-category-header">
+                                                <span class="ats-category-name">Skills Match</span>
+                                                <span class="ats-category-score">{{ skills_score }}/20</span>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" :style="'width: ' + (skills_score/20*100) + '%'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="ats-category">
+                                            <div class="ats-category-header">
+                                                <span class="ats-category-name">Readability</span>
+                                                <span class="ats-category-score">{{ readability_score }}/10</span>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" :style="'width: ' + (readability_score/10*100) + '%'"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="ats-feedback-list">
+                                        {% for feedback in ats_feedback %}
+                                        <li class="ats-feedback-item">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>{{ feedback }}</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="p-4">
-                        <div id="pdf-viewer-container" class="pdf-container bg-slate-100 rounded-lg overflow-hidden">
-                            <div id="pdf-viewer" class="w-full overflow-auto" style="max-height: 70vh;">
-                                <canvas id="pdf-canvas" class="mx-auto"></canvas>
+
+                    <!-- CV Preview Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">CV Preview</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="pdf-viewer-container">
+                                <div id="pdf-viewer">
+                                    <canvas id="pdf-canvas"></canvas>
+                                </div>
+                                <div class="pdf-controls">
+                                    <button id="prev-page" class="pdf-control-btn" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <div class="page-info">
+                                        Page <span id="current-page">1</span> of <span id="total-pages">1</span>
+                                    </div>
+                                    <button id="next-page" class="pdf-control-btn" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    <div class="zoom-controls">
+                                        <button id="zoom-out" class="pdf-control-btn">
+                                            <i class="fas fa-search-minus"></i>
+                                        </button>
+                                        <button id="zoom-in" class="pdf-control-btn">
+                                            <i class="fas fa-search-plus"></i>
+                                        </button>
+                                        <button id="fit-width" class="pdf-control-btn">
+                                            <i class="fas fa-arrows-alt-h"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Section Editing (Hidden by default) -->
-                <div id="section-editing" class="bg-white rounded-xl shadow-card overflow-hidden hidden">
-                    <div class="border-b border-slate-200 p-4">
-                        <h2 class="text-lg font-semibold text-slate-800">Edit Section</h2>
-                    </div>
-                    <div class="p-6">
-                        <form id="section-edit-form" method="post" action="{% url 'modify_cv_section' cv_id=cv.id %}">
-                            {% csrf_token %}
-                            <input type="hidden" id="section-name" name="section_name" value="">
-                            <div class="mb-4">
-                                <label for="section-content" class="block text-sm font-medium text-slate-700 mb-2">Section Content:</label>
-                                <textarea id="section-content" name="section_content" rows="8"
-                                    class="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 custom-scrollbar resize-none"></textarea>
-                            </div>
-                            <div class="flex justify-end space-x-3">
-                                <button type="button" id="cancel-edit-btn"
-                                    class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors duration-200">
-                                    Cancel
-                                </button>
-                                <button type="submit"
-                                    class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow">
-                                    Save Changes
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Sections and Suggestions -->
-            <div class="lg:col-span-5 space-y-6 animate-fade-in" style="animation-delay: 0.2s;">
-                <!-- CV Sections Card -->
-                <div class="bg-white rounded-xl shadow-card overflow-hidden">
-                    <div class="border-b border-slate-200 p-4">
-                        <h2 class="text-lg font-semibold text-slate-800">CV Sections</h2>
-                    </div>
-                    <div class="p-6 custom-scrollbar" style="max-height: 400px; overflow-y: auto;">
-                        <div class="space-y-3">
-                            <!-- Professional Summary Section -->
-                            <div class="section-edit-card p-4 border border-slate-200 rounded-lg cursor-pointer"
-                                data-section="summary" data-content="{{ cv.extracted_data.sections.summary|default:'' }}">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
+                    <!-- AI Suggestions Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">AI-Powered Suggestions</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="suggestions-list">
+                                {% if cv.extracted_data.suggestions %}
+                                    {% for section, suggestions in cv.extracted_data.suggestions.items %}
+                                        <div class="suggestion-item">
+                                            <div class="suggestion-header">
+                                                <div class="suggestion-icon">
+                                                    {% if section == 'general' %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% elif section == 'professional_summary' %}
+                                                        <i class="fas fa-user-tie"></i>
+                                                    {% elif section == 'work_experience' %}
+                                                        <i class="fas fa-briefcase"></i>
+                                                    {% elif section == 'education' %}
+                                                        <i class="fas fa-graduation-cap"></i>
+                                                    {% elif section == 'skills' %}
+                                                        <i class="fas fa-tools"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-lightbulb"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <h3 class="suggestion-title">{{ section|title }}</h3>
+                                            </div>
+                                            <div class="suggestion-content">
+                                                <ul class="suggestion-list">
+                                                    {% for suggestion in suggestions %}
+                                                        <li class="suggestion-list-item">
+                                                            <i class="fas fa-check"></i>
+                                                            <span>{{ suggestion }}</span>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-content">
+                                            No suggestions available. Please try analyzing your CV again.
+                                        </div>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="text-sm font-medium text-slate-800">Professional Summary</h3>
-                                        <p class="text-sm text-slate-500 mt-1 truncate">
-                                            {{ cv.extracted_data.sections.summary|default:"No summary found"|truncatechars:100 }}
-                                        </p>
-                                    </div>
-                                    <button class="edit-section-btn ml-2 text-slate-400 hover:text-primary-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Work Experience Section -->
-                            <div class="section-edit-card p-4 border border-slate-200 rounded-lg cursor-pointer"
-                                data-section="experience" data-content="{{ cv.extracted_data.sections.experience|default:'' }}">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-50 flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="text-sm font-medium text-slate-800">Work Experience</h3>
-                                        <p class="text-sm text-slate-500 mt-1 truncate">
-                                            {{ cv.extracted_data.sections.experience|default:"No experience found"|truncatechars:100 }}
-                                        </p>
-                                    </div>
-                                    <button class="edit-section-btn ml-2 text-slate-400 hover:text-primary-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Education Section -->
-                            <div class="section-edit-card p-4 border border-slate-200 rounded-lg cursor-pointer"
-                                data-section="education" data-content="{{ cv.extracted_data.sections.education|default:'' }}">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-50 flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                                            <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="text-sm font-medium text-slate-800">Education</h3>
-                                        <p class="text-sm text-slate-500 mt-1 truncate">
-                                            {{ cv.extracted_data.sections.education|default:"No education found"|truncatechars:100 }}
-                                        </p>
-                                    </div>
-                                    <button class="edit-section-btn ml-2 text-slate-400 hover:text-primary-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Skills Section -->
-                            <div class="section-edit-card p-4 border border-slate-200 rounded-lg cursor-pointer"
-                                data-section="skills" data-content="{{ cv.extracted_data.sections.skills|default:'' }}">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-amber-50 flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="text-sm font-medium text-slate-800">Skills</h3>
-                                        <p class="text-sm text-slate-500 mt-1 truncate">
-                                            {{ cv.extracted_data.sections.skills|default:"No skills found"|truncatechars:100 }}
-                                        </p>
-                                    </div>
-                                    <button class="edit-section-btn ml-2 text-slate-400 hover:text-primary-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Projects Section -->
-                            <div class="section-edit-card p-4 border border-slate-200 rounded-lg cursor-pointer"
-                                data-section="projects" data-content="{{ cv.extracted_data.sections.projects|default:'' }}">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-pink-50 flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="text-sm font-medium text-slate-800">Projects</h3>
-                                        <p class="text-sm text-slate-500 mt-1 truncate">
-                                            {{ cv.extracted_data.sections.projects|default:"No projects found"|truncatechars:100 }}
-                                        </p>
-                                    </div>
-                                    <button class="edit-section-btn ml-2 text-slate-400 hover:text-primary-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Certifications Section -->
-                            <div class="section-edit-card p-4 border border-slate-200 rounded-lg cursor-pointer"
-                                data-section="certifications" data-content="{{ cv.extracted_data.sections.certifications|default:'' }}">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-teal-50 flex items-center justify-center mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h3 class="text-sm font-medium text-slate-800">Certifications</h3>
-                                        <p class="text-sm text-slate-500 mt-1 truncate">
-                                            {{ cv.extracted_data.sections.certifications|default:"No certifications found"|truncatechars:100 }}
-                                        </p>
-                                    </div>
-                                    <button class="edit-section-btn ml-2 text-slate-400 hover:text-primary-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- AI Suggestions Card -->
-                <div class="bg-white rounded-xl shadow-card overflow-hidden">
-                    <div class="border-b border-slate-200 p-4">
-                        <h2 class="text-lg font-semibold text-slate-800">AI Suggestions</h2>
-                    </div>
-                    <div class="p-6 custom-scrollbar" style="max-height: 400px; overflow-y: auto;">
-                        {% if cv.extracted_data.suggestions %}
-                            <div class="space-y-4">
-                                {% for section, suggestions in cv.extracted_data.suggestions.items %}
-                                    <div>
-                                        <h3 class="text-sm font-medium text-slate-800 mb-2 capitalize">{{ section }}</h3>
-                                        <ul class="space-y-2">
-                                            {% for suggestion in suggestions %}
-                                                <li class="flex items-start">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary-500 mt-1 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                                    </svg>
-                                                    <span class="text-sm text-slate-600">{{ suggestion }}</span>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
+                <!-- Right Column -->
+                <div class="right-column">
+                    <!-- CV Sections Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">CV Sections</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="sections-list">
+                                <!-- Professional Summary -->
+                                <div class="section-item" data-section="professional_summary">
+                                    <div class="section-header">
+                                        <div class="section-icon summary">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        <h3 class="section-title">Professional Summary</h3>
+                                        <button class="edit-btn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
                                     </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="flex items-center justify-center h-24 text-slate-500">
-                                <span>No suggestions available</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+                                    <div class="section-content">
+                                        {{ cv.extracted_data.sections.summary|default:"No summary found" }}
+                                    </div>
+                                </div>
 
-                <!-- Action Buttons -->
-                <div class="bg-white rounded-xl shadow-card overflow-hidden p-6">
-                    <div class="space-y-4">
+                                <!-- Work Experience -->
+                                <div class="section-item" data-section="work_experience">
+                                    <div class="section-header">
+                                        <div class="section-icon experience">
+                                            <i class="fas fa-briefcase"></i>
+                                        </div>
+                                        <h3 class="section-title">Work Experience</h3>
+                                        <button class="edit-btn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="section-content">
+                                        {{ cv.extracted_data.sections.experience|default:"No experience found" }}
+                                    </div>
+                                </div>
+
+                                <!-- Education -->
+                                <div class="section-item" data-section="education">
+                                    <div class="section-header">
+                                        <div class="section-icon education">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </div>
+                                        <h3 class="section-title">Education</h3>
+                                        <button class="edit-btn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="section-content">
+                                        {{ cv.extracted_data.sections.education|default:"No education found" }}
+                                    </div>
+                                </div>
+
+                                <!-- Skills -->
+                                <div class="section-item" data-section="skills">
+                                    <div class="section-header">
+                                        <div class="section-icon skills">
+                                            <i class="fas fa-tools"></i>
+                                        </div>
+                                        <h3 class="section-title">Skills</h3>
+                                        <button class="edit-btn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="skills-container">
+                                        {% for skill in cv.extracted_data.skills|slice:":10" %}
+                                            <span class="skill-badge">{{ skill }}</span>
+                                        {% endfor %}
+                                        {% if cv.extracted_data.skills|length > 10 %}
+                                            <span class="skill-badge">+{{ cv.extracted_data.skills|length|add:"-10" }} more</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Projects -->
+                                <div class="section-item" data-section="projects">
+                                    <div class="section-header">
+                                        <div class="section-icon projects">
+                                            <i class="fas fa-project-diagram"></i>
+                                        </div>
+                                        <h3 class="section-title">Projects</h3>
+                                        <button class="edit-btn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="section-content">
+                                        {{ cv.extracted_data.sections.projects|default:"No projects found" }}
+                                    </div>
+                                </div>
+
+                                <!-- Certifications -->
+                                <div class="section-item" data-section="certifications">
+                                    <div class="section-header">
+                                        <div class="section-icon certifications">
+                                            <i class="fas fa-certificate"></i>
+                                        </div>
+                                        <h3 class="section-title">Certifications</h3>
+                                        <button class="edit-btn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="section-content">
+                                        {{ cv.extracted_data.sections.certifications|default:"No certifications found" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
                         {% if cv.modified_file %}
-                            <a href="{% url 'download_modified_cv' cv_id=cv.id %}"
-                               class="block w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 shadow-sm hover:shadow flex items-center justify-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
+                            <a href="{% url 'download_modified_cv' cv_id=cv.id %}" class="btn btn-primary">
+                                <i class="fas fa-download"></i>
                                 Download Modified CV
                             </a>
+                        {% else %}
+                            <button id="generate-modified" class="btn btn-primary">
+                                <i class="fas fa-magic"></i>
+                                Generate Optimized CV
+                            </button>
                         {% endif %}
-                        <a href="{% url 'upload_cv' %}"
-                           class="block w-full bg-white border-2 border-primary-500 hover:bg-primary-50 text-primary-500 font-medium py-3 px-4 rounded-lg transition-colors duration-200 shadow-sm hover:shadow flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                            </svg>
+                        <a href="{% url 'upload_cv' %}" class="btn btn-outline">
+                            <i class="fas fa-upload"></i>
                             Upload Another CV
                         </a>
+                    </div>
+
+                    <!-- Key Skills Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Key Skills Identified</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="skills-container">
+                                {% for skill in cv.extracted_data.skills %}
+                                    <span class="skill-badge">{{ skill }}</span>
+                                {% empty %}
+                                    <span class="text-gray-500">No skills identified</span>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- JavaScript for interactivity -->
+    <!-- Editor Panel -->
+    <div class="editor-panel" id="editor-panel">
+        <div class="editor-header">
+            <h3 class="editor-title" id="editor-title">Edit Section</h3>
+            <button class="close-editor" id="close-editor">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="editor-body">
+            <form id="section-edit-form" method="post" action="{% url 'modify_cv_section' cv_id=cv.id %}">
+                {% csrf_token %}
+                <input type="hidden" id="section-name" name="section_name" value="">
+                <div class="form-group">
+                    <label for="section-content" class="form-label">Content:</label>
+                    <textarea id="section-content" name="section_content" class="form-control"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="editor-footer">
+            <button class="btn btn-outline" id="cancel-edit">
+                Cancel
+            </button>
+            <button class="btn btn-primary" id="save-edit">
+                <i class="fas fa-save"></i>
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // PDF.js setup
-            const url = "{{ cv.file.url }}";
-            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            // PDF.js Configuration
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-            // PDF viewer variables
-            let pdfDoc = null;
-            let pageNum = 1;
-            let pageRendering = false;
-            let pageNumPending = null;
-            const canvas = document.getElementById('pdf-canvas');
-            const ctx = canvas.getContext('2d');
-            const pdfContainer = document.getElementById('pdf-viewer');
+            // PDF Viewer Variables
+            let pdfDoc = null,
+                pageNum = 1,
+                pageRendering = false,
+                pageNumPending = null,
+                scale = 1.0,
+                canvas = document.getElementById('pdf-canvas'),
+                ctx = canvas.getContext('2d');
 
-            // Scale the PDF to fit the container width while maintaining aspect ratio
+            // Load the PDF
             function renderPage(num) {
                 pageRendering = true;
+
+                // Using promise to fetch the page
                 pdfDoc.getPage(num).then(function(page) {
-                    const viewport = page.getViewport({ scale: 1.0 });
-                    const containerWidth = pdfContainer.clientWidth;
-                    const scale = containerWidth / viewport.width;
-                    const scaledViewport = page.getViewport({ scale: scale });
+                    const viewport = page.getViewport({ scale: scale });
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-                    canvas.height = scaledViewport.height;
-                    canvas.width = scaledViewport.width;
-
+                    // Render PDF page into canvas context
                     const renderContext = {
                         canvasContext: ctx,
-                        viewport: scaledViewport
+                        viewport: viewport
                     };
 
                     const renderTask = page.render(renderContext);
 
+                    // Wait for rendering to finish
                     renderTask.promise.then(function() {
                         pageRendering = false;
                         if (pageNumPending !== null) {
+                            // New page rendering is pending
                             renderPage(pageNumPending);
                             pageNumPending = null;
                         }
                     });
                 });
 
+                // Update page counters
                 document.getElementById('current-page').textContent = num;
+                document.getElementById('total-pages').textContent = pdfDoc.numPages;
+
+                // Update button states
+                document.getElementById('prev-page').disabled = num <= 1;
+                document.getElementById('next-page').disabled = num >= pdfDoc.numPages;
             }
 
+            // Queue rendering of the next page
             function queueRenderPage(num) {
                 if (pageRendering) {
                     pageNumPending = num;
@@ -480,6 +1131,7 @@
                 }
             }
 
+            // Previous page
             function onPrevPage() {
                 if (pageNum <= 1) {
                     return;
@@ -487,7 +1139,9 @@
                 pageNum--;
                 queueRenderPage(pageNum);
             }
+            document.getElementById('prev-page').addEventListener('click', onPrevPage);
 
+            // Next page
             function onNextPage() {
                 if (pageNum >= pdfDoc.numPages) {
                     return;
@@ -495,158 +1149,156 @@
                 pageNum++;
                 queueRenderPage(pageNum);
             }
+            document.getElementById('next-page').addEventListener('click', onNextPage);
 
-            // Load the PDF
-            pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            // Zoom in
+            document.getElementById('zoom-in').addEventListener('click', function() {
+                scale *= 1.1;
+                queueRenderPage(pageNum);
+            });
+
+            // Zoom out
+            document.getElementById('zoom-out').addEventListener('click', function() {
+                scale /= 1.1;
+                queueRenderPage(pageNum);
+            });
+
+            // Fit to width
+            document.getElementById('fit-width').addEventListener('click', function() {
+                pdfDoc.getPage(pageNum).then(function(page) {
+                    const containerWidth = document.getElementById('pdf-viewer').clientWidth;
+                    const viewport = page.getViewport({ scale: 1.0 });
+                    scale = containerWidth / viewport.width;
+                    queueRenderPage(pageNum);
+                });
+            });
+
+            // Initialize PDF
+            pdfjsLib.getDocument("{{ cv.file.url }}").promise.then(function(pdf) {
                 pdfDoc = pdf;
                 document.getElementById('total-pages').textContent = pdf.numPages;
+
+                // Initial/first page rendering
                 renderPage(pageNum);
 
-                // Adjust PDF size when window is resized
-                window.addEventListener('resize', function() {
-                    if (pdfDoc) {
-                        renderPage(pageNum);
-                    }
-                });
+                // Enable buttons
+                document.getElementById('prev-page').disabled = false;
+                document.getElementById('next-page').disabled = false;
+                document.getElementById('zoom-in').disabled = false;
+                document.getElementById('zoom-out').disabled = false;
+                document.getElementById('fit-width').disabled = false;
             });
 
-            // Page navigation
-            document.getElementById('prev-page-btn').addEventListener('click', onPrevPage);
-            document.getElementById('next-page-btn').addEventListener('click', onNextPage);
-
-            // Section editing functionality
-            const editModeToggle = document.getElementById('edit-mode-toggle');
-            const sectionEditing = document.getElementById('section-editing');
-            const sectionEditForm = document.getElementById('section-edit-form');
+            // Section Editor
+            const editorPanel = document.getElementById('editor-panel');
+            const overlay = document.getElementById('overlay');
+            const sectionItems = document.querySelectorAll('.section-item');
+            const editButtons = document.querySelectorAll('.edit-btn');
+            const closeEditor = document.getElementById('close-editor');
+            const cancelEdit = document.getElementById('cancel-edit');
+            const saveEdit = document.getElementById('save-edit');
             const sectionNameInput = document.getElementById('section-name');
             const sectionContentInput = document.getElementById('section-content');
-            const cancelEditBtn = document.getElementById('cancel-edit-btn');
-            const sectionCards = document.querySelectorAll('.section-edit-card');
-            const editButtons = document.querySelectorAll('.edit-section-btn');
+            const editorTitle = document.getElementById('editor-title');
+            const sectionEditForm = document.getElementById('section-edit-form');
 
-            // Toggle edit mode
-            editModeToggle.addEventListener('change', function() {
-                if (this.checked) {
-                    // Enable section edit mode
-                    sectionCards.forEach(card => {
-                        card.addEventListener('click', handleSectionClick);
-                        card.style.cursor = 'pointer';
-                    });
-                } else {
-                    // Disable section edit mode
-                    sectionCards.forEach(card => {
-                        card.removeEventListener('click', handleSectionClick);
-                        card.style.cursor = 'default';
-                        card.classList.remove('active');
-                    });
-                    sectionEditing.classList.add('hidden');
-                }
+            // Open editor when section is clicked
+            sectionItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Don't open if clicking the edit button
+                    if (e.target.closest('.edit-btn')) {
+                        return;
+                    }
+
+                    const section = this.dataset.section;
+                    const title = this.querySelector('.section-title').textContent;
+                    const content = this.querySelector('.section-content').textContent;
+
+                    openEditor(section, title, content);
+                });
             });
 
-            // Handle section click
-            function handleSectionClick(e) {
-                // Don't trigger if clicking the edit button
-                if (e.target.closest('.edit-section-btn')) {
-                    return;
-                }
+            // Open editor when edit button is clicked
+            editButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
 
-                const card = e.currentTarget;
-                const sectionName = card.dataset.section;
-                const sectionContent = card.dataset.content;
+                    const item = this.closest('.section-item');
+                    const section = item.dataset.section;
+                    const title = item.querySelector('.section-title').textContent;
+                    const content = item.querySelector('.section-content').textContent;
 
-                // Highlight active card
-                sectionCards.forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
+                    openEditor(section, title, content);
+                });
+            });
 
-                // Populate form
-                sectionNameInput.value = sectionName;
-                sectionContentInput.value = sectionContent;
+            // Open editor function
+            function openEditor(section, title, content) {
+                editorTitle.textContent = `Edit ${title}`;
+                sectionNameInput.value = section;
+                sectionContentInput.value = content;
 
-                // Show editing panel
-                sectionEditing.classList.remove('hidden');
-
-                // Scroll to editing panel
-                sectionEditing.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                editorPanel.classList.add('active');
+                overlay.classList.add('active');
             }
 
-                               // Edit button click
-                               editButtons.forEach(button => {
-                        button.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const card = this.closest('.section-edit-card');
-                            const sectionName = card.dataset.section;
-                            const sectionContent = card.dataset.content;
+            // Close editor
+            function closeEditorPanel() {
+                editorPanel.classList.remove('active');
+                overlay.classList.remove('active');
+            }
 
-                            // Enable edit mode if not already enabled
-                            if (!editModeToggle.checked) {
-                                editModeToggle.checked = true;
-                                sectionCards.forEach(c => {
-                                    c.addEventListener('click', handleSectionClick);
-                                    c.style.cursor = 'pointer';
-                                });
-                            }
+            closeEditor.addEventListener('click', closeEditorPanel);
+            cancelEdit.addEventListener('click', closeEditorPanel);
+            overlay.addEventListener('click', closeEditorPanel);
 
-                            // Highlight active card
-                            sectionCards.forEach(c => c.classList.remove('active'));
-                            card.classList.add('active');
+            // Save changes
+            saveEdit.addEventListener('click', function() {
+                const formData = new FormData(sectionEditForm);
 
-                            // Populate form
-                            sectionNameInput.value = sectionName;
-                            sectionContentInput.value = sectionContent;
+                fetch(sectionEditForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the section content in the UI
+                        const sectionItem = document.querySelector(`.section-item[data-section="${data.section_name}"]`);
+                        if (sectionItem) {
+                            sectionItem.querySelector('.section-content').textContent = data.updated_content;
+                        }
 
-                            // Show editing panel
-                            sectionEditing.classList.remove('hidden');
+                        // Close editor
+                        closeEditorPanel();
 
-                            // Scroll to editing panel
-                            sectionEditing.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        });
-                    });
-
-                    // Cancel edit button
-                    cancelEditBtn.addEventListener('click', function() {
-                        sectionEditing.classList.add('hidden');
-                        sectionCards.forEach(card => card.classList.remove('active'));
-                    });
-
-                    // Form submission
-                    sectionEditForm.addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        const formData = new FormData(this);
-
-                        fetch(this.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Update the section content in the UI
-                                const activeCard = document.querySelector('.section-edit-card.active');
-                                if (activeCard) {
-                                    activeCard.dataset.content = data.updated_content;
-                                    activeCard.querySelector('p').textContent =
-                                        data.updated_content.length > 100 ?
-                                        data.updated_content.substring(0, 100) + '...' :
-                                        data.updated_content;
-                                }
-
-                                // Show success message
-                                alert('Section updated successfully!');
-                                sectionEditing.classList.add('hidden');
-                                sectionCards.forEach(card => card.classList.remove('active'));
-                            } else {
-                                alert('Error updating section: ' + data.error);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('An error occurred while updating the section.');
-                        });
-                    });
+                        // Show success message
+                        alert('Section updated successfully!');
+                    } else {
+                        alert('Error updating section: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the section.');
                 });
-            </script>
-        </body>
-        </html>
+            });
+
+            // Generate modified CV button
+            document.getElementById('generate-modified')?.addEventListener('click', function() {
+                // Show loading state
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                this.disabled = true;
+
+                // Simulate API call (replace with actual implementation)
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

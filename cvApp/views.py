@@ -67,57 +67,57 @@ def generate_rule_based_suggestions(extracted_text, skills):
 
     return suggestions
 
-def generate_deepseek_suggestions(extracted_text):
-    """Generate AI-powered CV suggestions using DeepSeek R1 via OpenRouter API"""
-    if cache.get("openrouter_api_limit"):
-        logger.warning("API rate limit reached")
-        return None
-
+def generate_gemini_suggestions(extracted_text):
+    """Generate AI-powered CV suggestions using Gemini API"""
     try:
         headers = {
-            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:8000/",  # Replace with your site
-            "X-Title": "CV Analyzer"  # Your app name
         }
 
         payload = {
-            "model": settings.DEEPSEEK_MODEL,
-            "messages": [
+            "contents": [
                 {
-                    "role": "system",
-                    "content": """You are an expert HR consultant. Provide JSON output with:
-                    - general (overall improvements)
-                    - professional_summary
-                    - work_experience
-                    - education
-                    - skills
-                    - skills_list (extracted skills)"""
-                },
-                {
-                    "role": "user",
-                    "content": f"Analyze this CV:\n\n{extracted_text[:10000]}"  # Truncate to ~2000 words
+                    "parts": [
+                        {
+                            "text": (
+                                "You are an expert HR consultant. Provide JSON output with the following structure:\n"
+                                "- general (overall improvements)\n"
+                                "- professional_summary\n"
+                                "- work_experience\n"
+                                "- education\n"
+                                "- skills\n"
+                                "- skills_list (extracted skills)\n\n"
+                                f"Analyze this CV:\n\n{extracted_text[:10000]}"  # Truncate to ~2000 words
+                            )
+                        }
+                    ]
                 }
             ],
-            "response_format": { "type": "json_object" },
-            "temperature": 0.7,
-            "max_tokens": 1500
+            "generationConfig": {
+                "response_mime_type": "application/json",
+                "temperature": 0.7,
+                "maxOutputTokens": 1500
+            }
         }
 
+        # Construct the API URL with the API key
+        api_url = f"{settings.GEMINI_API_URL}?key={settings.GEMINI_API_KEY}"
+
         response = requests.post(
-            settings.OPENROUTER_API_URL,
+            api_url,
             headers=headers,
             json=payload,
             timeout=30
         )
         response.raise_for_status()
 
-        # Cache rate limit (adjust based on OpenRouter's limits)
-        cache.set("openrouter_api_limit", True, timeout=60)
+        # Cache rate limit (adjust based on Gemini's limits)
+        cache.set("gemini_api_limit", True, timeout=60)
 
         # Parse response
         result = response.json()
-        content = result['choices'][0]['message']['content']
+        # Gemini response structure: content is under 'candidates[0].content.parts[0].text'
+        content = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '{}')
 
         # Handle both string and dict responses
         if isinstance(content, str):
@@ -125,12 +125,12 @@ def generate_deepseek_suggestions(extracted_text):
         return content
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"OpenRouter API request error: {str(e)}")
+        logger.error(f"Gemini API request error: {str(e)}")
         return None
     except (json.JSONDecodeError, KeyError) as e:
-        logger.error(f"Failed to parse API response: {str(e)}")
+        logger.error(f"Failed to parse Gemini API response: {str(e)}")
         return None
-
+@login_required
 @login_required
 def upload_cv(request):
     error = None
@@ -155,7 +155,7 @@ def upload_cv(request):
                         cv.delete()
                     else:
                         cv.extracted_text = text
-                        ai_suggestions = generate_deepseek_suggestions(text)
+                        ai_suggestions = generate_gemini_suggestions(text)
                         if isinstance(ai_suggestions, str):
                             try:
                                 ai_suggestions = json.loads(ai_suggestions)
@@ -166,17 +166,32 @@ def upload_cv(request):
                                 'general': ["AI analysis unavailable. Showing basic suggestions."],
                                 'skills_list': []
                             }
-                        skills = ai_suggestions.get('skills_list', [])
-                        if not skills:
+                        # Debug the ai_suggestions structure
+                        logger.debug(f"AI Suggestions: {ai_suggestions}")
+
+                        # Normalize ai_suggestions to ensure fields are lists
+                        def ensure_list(value):
+                            if isinstance(value, dict):
+                                # Convert dict to list (e.g., take values or specific key)
+                                return list(value.values()) if value else []
+                            elif isinstance(value, list):
+                                return value
+                            elif value is None:
+                                return []
+                            else:
+                                return [value]
+
+                        skills = ensure_list(ai_suggestions.get('skills_list', []))
+                        if not skills and nlp:
                             doc = nlp(text)
                             skills = [ent.text for ent in doc.ents if ent.label_ == 'SKILL']
                         rule_suggestions = generate_rule_based_suggestions(text, skills)
                         combined_suggestions = {
-                            'general': rule_suggestions['general'] + ai_suggestions.get('general', []),
-                            'professional_summary': rule_suggestions['professional_summary'] + ai_suggestions.get('professional_summary', []),
-                            'work_experience': rule_suggestions['work_experience'] + ai_suggestions.get('work_experience', []),
-                            'education': rule_suggestions['education'] + ai_suggestions.get('education', []),
-                            'skills': rule_suggestions['skills'] + ai_suggestions.get('skills', [])
+                            'general': rule_suggestions['general'] + ensure_list(ai_suggestions.get('general', [])),
+                            'professional_summary': rule_suggestions['professional_summary'] + ensure_list(ai_suggestions.get('professional_summary', [])),
+                            'work_experience': rule_suggestions['work_experience'] + ensure_list(ai_suggestions.get('work_experience', [])),
+                            'education': rule_suggestions['education'] + ensure_list(ai_suggestions.get('education', [])),
+                            'skills': rule_suggestions['skills'] + ensure_list(ai_suggestions.get('skills', []))
                         }
                         cv.extracted_data = {
                             'skills': skills,
@@ -194,6 +209,7 @@ def upload_cv(request):
 def cv_results(request, cv_id):
     cv = get_object_or_404(CV, id=cv_id, user=request.user)
     return render(request, 'results.html', {'cv': cv})
+
 
 @login_required
 def modify_cv(request, cv_id):
@@ -219,18 +235,18 @@ def modify_cv(request, cv_id):
                 doc = nlp(modified_text)
                 skills = [ent.text for ent in doc.ents if ent.label_ == 'SKILL']
                 rule_suggestions = generate_rule_based_suggestions(modified_text, skills)
-                deepseek_suggestions = generate_deepseek_suggestions(modified_text)
-                if isinstance(deepseek_suggestions, str):
+                gemini_suggestions = generate_gemini_suggestions(modified_text)  # Updated here
+                if isinstance(gemini_suggestions, str):
                     try:
-                        deepseek_suggestions = json.loads(deepseek_suggestions)
+                        gemini_suggestions = json.loads(gemini_suggestions)
                     except json.JSONDecodeError:
-                        deepseek_suggestions = None
+                        gemini_suggestions = None
                 combined_suggestions = {
-                    'general': rule_suggestions['general'] + (deepseek_suggestions.get('general', []) if deepseek_suggestions else []),
-                    'professional_summary': rule_suggestions['professional_summary'] + (deepseek_suggestions.get('professional_summary', []) if deepseek_suggestions else []),
-                    'work_experience': rule_suggestions['work_experience'] + (deepseek_suggestions.get('work_experience', []) if deepseek_suggestions else []),
-                    'education': rule_suggestions['education'] + (deepseek_suggestions.get('education', []) if deepseek_suggestions else []),
-                    'skills': rule_suggestions['skills'] + (deepseek_suggestions.get('skills', []) if deepseek_suggestions else [])
+                    'general': rule_suggestions['general'] + (gemini_suggestions.get('general', []) if gemini_suggestions else []),
+                    'professional_summary': rule_suggestions['professional_summary'] + (gemini_suggestions.get('professional_summary', []) if gemini_suggestions else []),
+                    'work_experience': rule_suggestions['work_experience'] + (gemini_suggestions.get('work_experience', []) if gemini_suggestions else []),
+                    'education': rule_suggestions['education'] + (gemini_suggestions.get('education', []) if gemini_suggestions else []),
+                    'skills': rule_suggestions['skills'] + (gemini_suggestions.get('skills', []) if gemini_suggestions else [])
                 }
                 cv.extracted_data = {
                     'skills': skills,
@@ -241,6 +257,50 @@ def modify_cv(request, cv_id):
             except Exception as e:
                 return render(request, 'results.html', {'cv': cv, 'error': f'Error saving modifications: {str(e)}'})
     return render(request, 'results.html', {'cv': cv})
+
+
+@login_required
+def generate_optimized_cv(request, cv_id):
+    cv = get_object_or_404(CV, id=cv_id, user=request.user)
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            sections = data.get('sections', {})
+            ats_feedback = data.get('ats_feedback', [])
+
+            # Combine sections into optimized text
+            optimized_text = "\n\n".join(
+                f"{section.upper()}\n{content}"
+                for section, content in sections.items()
+            )
+
+            # Add ATS feedback as comments
+            optimized_text += "\n\n/* ATS OPTIMIZATION TIPS:\n" + "\n".join(ats_feedback) + "\n*/"
+
+            # Generate PDF
+            buffer = BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
+            y = 750
+            for line in optimized_text.split('\n'):
+                p.drawString(50, y, line[:100])
+                y -= 15
+                if y < 50:
+                    p.showPage()
+                    y = 750
+            p.save()
+            buffer.seek(0)
+
+            # Save modified file
+            cv.modified_file.save(f'optimized_cv_{cv.id}.pdf', File(buffer))
+            cv.save()
+
+            return JsonResponse({'success': True})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
 
 @login_required
 def download_modified_cv(request, cv_id):

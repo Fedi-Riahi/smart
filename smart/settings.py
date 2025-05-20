@@ -106,7 +106,8 @@ LOGIN_REDIRECT_URL = '/upload/'  # Redirect to upload page after login
 LOGOUT_REDIRECT_URL = '/login/'
 #DeepSeek API Configuration
 # OpenAI Configuration
-OPENROUTER_API_KEY = config('API_KEY')  # Add to .env
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+GEMINI_API_KEY = config('API_KEY')
+print(f"Loaded API Key: {GEMINI_API_KEY}")  # Debug output
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 DEEPSEEK_MODEL = "deepseek/deepseek-r1:free"  # Free tier model
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
