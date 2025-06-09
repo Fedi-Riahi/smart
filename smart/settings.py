@@ -111,3 +111,5 @@ print(f"Loaded API Key: {GEMINI_API_KEY}")  # Debug output
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 DEEPSEEK_MODEL = "deepseek/deepseek-r1:free"  # Free tier model
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ADZUNA_APP_ID = '2cb77e62'
+ADZUNA_APP_KEY = 'c4a83270782ab0950589efa3f2f0cbc1'

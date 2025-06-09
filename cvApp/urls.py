@@ -11,4 +11,5 @@ urlpatterns = [
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('cv/<int:cv_id>/generate-optimized/', views.generate_optimized_cv, name='generate_optimized_cv'),
+    path('fetch-jobs/<int:cv_id>/', views.fetch_jobs, name='fetch_jobs'),
 ]

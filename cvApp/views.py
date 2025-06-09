@@ -348,3 +348,56 @@ def generate_preview_pdf(request, cv_id):
     except Exception as e:
         logger.error(f"Error generating preview PDF: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def fetch_jobs(request, cv_id):
+    try:
+        # Get CV and extract skills
+        cv = CV.objects.get(id=cv_id, user=request.user)
+        skills = cv.extracted_data.get('skills', [])
+        logger.debug(f"CV {cv_id} skills: {skills}")
+        if not skills:
+            return JsonResponse({'status': 'error', 'message': 'No skills found in CV'}, status=400)
+
+        # Adzuna API request
+        url = 'https://api.adzuna.com/v1/api/jobs/us/search/1'
+        job_listings = []
+        seen_urls = set()
+
+        # Query each skill individually to broaden results
+        for skill in skills[:3]:  # Limit to 3 skills to avoid rate limits
+            params = {
+                'app_id': settings.ADZUNA_APP_ID,
+                'app_key': settings.ADZUNA_APP_KEY,
+                'what': skill,
+                'max_days_old': 30,
+                'results_per_page': 10,
+            }
+            response = requests.get(url, params=params)
+            logger.debug(f"Adzuna query: {skill}, Status: {response.status_code}")
+            response.raise_for_status()
+            jobs = response.json().get('results', [])
+            logger.debug(f"Adzuna results for {skill}: {len(jobs)} jobs")
+
+            for job in jobs:
+                job_data = {
+                    'title': job.get('title', 'No title'),
+                    'company': job.get('company', {}).get('display_name', 'Unknown'),
+                    'location': job.get('location', {}).get('display_name', 'Unknown'),
+                    'description': job.get('description', '')[:200] + '...',
+                    'url': job.get('redirect_url', '#'),
+                }
+                if job_data['url'] not in seen_urls:
+                    job_listings.append(job_data)
+                    seen_urls.add(job_data['url'])
+
+        return JsonResponse({'status': 'success', 'jobs': job_listings})
+
+    except CV.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'CV not found'}, status=404)
+    except requests.RequestException as e:
+        logger.error(f"Adzuna API error: {str(e)}")
+        return JsonResponse({'status': 'error', 'message': f'API error: {str(e)}'}, status=500)
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        return JsonResponse({'status': 'error', 'message': f'Error: {str(e)}'}, status=500)

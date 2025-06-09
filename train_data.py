@@ -74,8 +74,6 @@ def estimate_eta(step: str, data_size: int = 0) -> float:
         return max(300, data_size * 10)  # ~10s per resume, min 5min
     elif step == "evaluate_model":
         return 5  # Small subset, quick
-    elif step == "test_model":
-        return 3  # Few test texts, very quick
     return 0
 
 def extract_resume_texts_from_csv(csv_path: str = "resumes/Resume.csv") -> List[str]:
@@ -232,14 +230,6 @@ def evaluate_model(
     logger.info(f"Evaluation scores: {scorer.scores}")
     return scorer.scores
 
-def test_model(nlp: spacy.language.Language, test_texts: List[str]) -> None:
-    """Test the model on new texts and print detected entities."""
-    for text in test_texts:
-        doc = nlp(text)
-        entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ == "SKILL"]
-        logger.info(f"Text: {text}")
-        logger.info(f"Entities: {entities}")
-
 def main():
     # Step 1: Extract resume texts from CSV
     logger.info(f"Step 1: Extracting resume texts from CSV. ETA: {estimate_eta('extract_csv'):.2f} seconds")
@@ -287,20 +277,6 @@ def main():
     evaluate_model(trained_nlp, train_data[:min(5, len(train_data))])
     duration = time.time() - start_time
     logger.info(f"Step 5 completed in {duration:.2f} seconds")
-
-    # Step 6: Test the model
-    logger.info(f"Step 6: Testing model. ETA: {estimate_eta('test_model'):.2f} seconds")
-    start_time = time.time()
-    test_texts = [
-        "Implemented CI/CD pipelines using Jenkins and GitLab CI.",
-        "Managed infrastructure with Terraform and Ansible.",
-        "Containerized applications using Docker and Kubernetes.",
-        "Monitored systems with Prometheus and Grafana.",
-        "Automated deployments using Bash and Python scripts."
-    ]
-    test_model(trained_nlp, test_texts)
-    duration = time.time() - start_time
-    logger.info(f"Step 6 completed in {duration:.2f} seconds")
 
 if __name__ == "__main__":
     main()
