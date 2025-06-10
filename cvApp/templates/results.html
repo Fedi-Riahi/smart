@@ -973,33 +973,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-rocket logo-icon"></i>
-                    <span>CareerCraft AI</span>
-                </div>
-                <div class="nav-links">
-                    <a href="{% url 'upload_cv' %}" class="nav-link">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-history"></i>
-                        <span>History</span>
-                    </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </div>
-                <div class="user-menu">
-                    <div class="user-avatar">{{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}</div>
-                </div>
-            </div>
-        </div>
-    </header>
+   
 
     <!-- Main Content -->
     <main class="main-content">
